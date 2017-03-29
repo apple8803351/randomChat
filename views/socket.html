@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>聊天室</title>
+
+	<!-- bookstrap -->
+    <link rel="stylesheet" href="./bootstrap/css/bootstrap.css" />
+
+	<style>
+		/* common style start */
+
+		* {
+		    -webkit-box-sizing: border-box;
+		    -moz-box-sizing: border-box;
+		    box-sizing: border-box;
+
+		    font-family: '微軟正黑體';
+		}
+
+		*:focus {
+		    outline: none !important;
+		}
+
+		html {
+		    font-size: 16px;
+		}
+
+		body {
+		    margin: 0;
+		    padding: 0;
+		    background-color: #A0B1B6;
+		}
+
+		ul,li{
+		    list-style: none;
+		    padding: 0;
+		    margin: 0;
+		}
+
+		a {
+		    color: #000000;
+		    text-decoration: none;
+		}
+
+		a:hover,
+		a:focus,
+		a:visited {
+		    text-decoration: none;
+		}
+
+		img {
+		    width: 100%;
+		    height: auto;
+		}
+
+		h1, h2, h3, h4, h5, h6 {
+		    text-align: center;
+		    font-weight: 800;
+		    margin-top: 10px;
+		    margin-bottom: 10px;
+		    letter-spacing: 5px; /* 字-左右間距 */
+		}
+
+		textarea {
+			resize: none;
+		}
+
+		.gray-bg {
+			background-color: #777777;
+		}
+
+		.relative {
+			position: relative;
+		}
+
+		.no-padding {
+			padding: 0 !important;
+		}
+
+		/*
+		[class*="col-"] {
+			padding: 0 !important;
+		}
+		*/
+
+		/* common style end */    	
+
+		#chat-wrapper {
+			padding: 10px 10px 0px 10px;
+			font-size: 18px;
+			margin-bottom: 75px;
+			background-color: rgba(255,255,255,0.2);
+			min-height: 80vh;
+		}
+
+		#chat-wrapper > div {
+		    position: relative;
+		    margin: 0 0 1rem;
+		    padding: 0.5rem 1rem;
+		    border-radius: 15px;
+		    word-wrap: break-word;
+		    clear: both;
+		    max-width: 85%;
+		    display: block;
+		}
+
+		.system {
+			font-weight: bold;
+		}
+
+		.me {
+			float: right;
+			background-color: #ff5e3a;
+			color: #FFF;
+			margin-right: 8px !important;
+		}
+		
+		.other {
+			float: left;
+			background-color: #FFF;
+			color: #000;
+			margin-left: 8px !important;
+		}
+
+		#send-wrapper {
+			position: fixed;
+			bottom: 0;
+			width: 100%;
+			padding: 0.5rem 0;
+			background: #eff0f1;
+			max-height: 200px;
+		}
+
+		#input-message {
+			width: 100%;
+			font-size: 18px;
+			border: 1px solid #bebfc0;
+			padding: 1rem 1rem;
+			border-radius: 5px;
+		}
+
+		#send-message {
+			width: 100%;
+			border: none;
+			padding: 1rem 1rem;
+			font-weight: bold;
+			font-size: 18px;
+			color: #FFF;
+			border-radius: 10px;
+			background-color: #3D9BE4;
+		}
+
+		#send-message:active {
+			margin-top: 0.125rem;
+		}
+		
+		/* loading style start */
+	
+		.spinner{
+            position: absolute;
+            top: calc(50% - 60px);
+            left: calc(50% - 100px);
+            width: 200px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .spinner > div {
+			width: 28px;
+			height: 28px;
+			background-color: #333;
+			border-radius: 100%;
+			display: inline-block;
+			animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+			-webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+        }
+
+        .spinner .bounce1 {
+        	animation-delay: -0.32s;
+        	-webkit-animation-delay: -0.32s;
+        }
+
+        .spinner .bounce2 {
+        	-webkit-animation-delay: -0.16s;
+        	animation-delay: -0.16s;
+        }
+
+        @-webkit-keyframes sk-bouncedelay {
+	        0%, 80%, 100% { -webkit-transform: scale(0) }
+	        40% { -webkit-transform: scale(1.0) }
+        }
+
+        @keyframes sk-bouncedelay {
+        	0%, 80%, 100% { 
+            	-webkit-transform: scale(0);
+            	transform: scale(0);
+          	} 40% { 
+            	-webkit-transform: scale(1.0);
+            	transform: scale(1.0);
+          	}
+        }
+		
+		/* loading style end */
+
+		@media screen and (max-width: 768px) {
+			#input-message {
+				padding: 0.25rem;
+			}
+
+			#send-message {
+				padding: 0.25rem;
+			}
+		}
+
+	</style>
+
+</head>
+<body>
+	<div class="header-wrapper">
+		<h3>隨機聊天</h3>
+	</div>
+	<div class="body-wrapper">
+		<div class="container">
+			<div class="row">
+				<div id="chat-wrapper" class="col-xs-12 col-md-12">
+					<!--
+					<div class="system message">
+						歡迎進入聊天室
+					</div>
+					<div class="me">
+						<span class="username">nokia124t</span>
+						<span> : </span>
+						<span class="message">你好</span>
+					</div>
+					<div class="other">
+						<span class="username">nokia1241t</span>
+						<span> : </span>
+						<span class="message">你好</span>
+					</div>
+					
+					<div class="me">
+						<span class="message">你好</span>
+					</div>
+
+					<div class="other">
+						<span class="message">你好</span>
+					</div>-->
+				</div>
+
+				<div class="spinner">
+		            <h2 style="font-family:'微軟正黑體'; color: #0066cc">尋　找　中</h2>
+		            <div class="bounce1"></div>
+		            <div class="bounce2" style="margin-left: 20px"></div>
+		            <div class="bounce3" style="margin-left: 20px"></div>
+		        </div>
+			</div>
+		</div>	
+
+		<div id="send-wrapper">
+			<div class="container">
+				<div class="row">
+					<div class="col-xs-9 col-md-11 col-lg-11">
+						<input id="input-message" type="text" placeholder="輸入訊息" value="" />
+					</div>
+					<div class="col-xs-3 col-md-1 col-lg-1">
+						<input id="send-message" type="button" value="傳送" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="footer-wrapper">
+
+	</div>
+	
+	<audio id="prompt-sound">
+		<source src="./sounds/sound4.ogg" type="audio/ogg">
+		Your browser does not support the audio element.
+	</audio>
+
+	<script src="./js/jquery.min.js"></script>
+
+	<!-- bookstrap 插件 -->
+	<script src="./bootstrap/javascript/bootstrap.min.js"></script>
+
+	<script src="./socket.io/socket.io.js"></script>
+
+	<script>
+		$(function(){
+			var window_blur = false;
+
+			var unread_number = 0;
+
+			//視窗焦點監聽
+			$(window).focus(function(){
+				$(document).attr("title", "聊天室");
+
+				unread_number = 0;
+
+				window_blur = false;
+			});
+
+			//視窗失焦監聽
+			$(window).blur(function(){
+				window_blur = true;
+			});
+
+			var start = false;
+
+			var socket = io();
+
+			socket.on('connect', function(){
+				
+			});
+
+			socket.on('start', function(){
+				$('.spinner').fadeOut(100);
+
+				var system_message = "" +
+					"<div class='system'>" +
+						"<span class='message'>配對成功-可以開始聊天了</span>" +
+					"</div>";
+
+				$("#chat-wrapper").append(system_message);
+				
+				start = true;
+			});
+
+			socket.on('message', function(data){
+				var other_message = "" +
+					"<div class='other'>" +
+						"<span class='message'>" + data.message + "</span>" +
+					"</div>";
+
+				addMessage(other_message);
+
+				if(window_blur)
+				{
+					$("#prompt-sound")[0].play();
+					unread_number += 1;
+
+					$(document).attr("title", "(" + unread_number + ")" + "聊天室");
+				}
+			});
+
+			socket.on('leave', function(){
+				var system_message = "" +
+					"<div class='system'>" +
+						"<span class='message'>對方已經離開</span>" +
+					"</div>";
+
+				$("#chat-wrapper").append(system_message);
+
+				start = false;
+			});
+
+			$("#input-message").bind("keyup keydown", function(event){
+				
+				if(event.which == 13)
+				{
+					event.preventDefault();
+
+					sendMessage($(this).val());
+				}
+			});
+
+			$("#send-message").click(function(){
+				sendMessage($("#input-message").val());
+			});
+
+			var sendMessage = function(message) {
+				if(message != "" && start)
+				{
+					var me_message = "" +
+						"<div class='me'>" +
+							"<span class='message'>" + message + "</span>" +
+						"</div>";
+
+					addMessage(me_message);
+
+					socket.emit('message', {'message': message});
+
+					$("#input-message").val("");
+				}
+			};
+
+			var addMessage = function(message) {
+				$("#chat-wrapper").append(message);
+
+				var scrollHeight = $("body")[0].scrollHeight; //scroll的高度   
+	    		$("body").animate({ scrollTop: scrollHeight}, 200); //控制scroll bar的位
+			}
+		});
+
+	</script>
+</body>
+</html>
